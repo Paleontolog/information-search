@@ -1,0 +1,1 @@
+from embendings.w2v_model.w2vv import train_word2vec
