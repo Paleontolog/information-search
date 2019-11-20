@@ -1,8 +1,8 @@
-# from w2v_model import w2vv
-from fasttext_model import fast_text
+#from w2v_model import w2v
+#from fasttext_model import fast_text
 import json
 import collections
-from embendings.w2v_model import w2vv
+from w2v_model.w2v import train_word2vec
 import pymystem3
 import re
 import os
@@ -42,15 +42,14 @@ def test(model):
 
 
 
-model = w2vv.train_word2vec(model_paths=r"models\\new_modelka111_6.model", option="load")
+model = train_word2vec(model_paths="models/w2v/new_modelka111_6.model", option="load")
 
 #model = fast_text.train_fast_text(model_paths="models/fasttext/modelka_fast_text_Base.model", option="load")
-#paths = ["{}\\{}".format(DATASET_PATH, file) for file in os.listdir("Final_Dataset")]
 
-# model = w2vv.train_word2vec(data=get_all_doc(paths),
-#                             model_paths="models/new_modelka111.model",
-#                             model_save_path="models/new_modelka111_{}.model",
-#                            option="create", epochs=0)
+# model = w2v.train_word2vec(data=result_array,
+#                            model_paths="models/new_modelka111.model",
+#                            model_save_path="models/new_modelka111_{1}.model",
+#                            option="retrain", epochs=30)
 
 # paths = ["{}\\{}".format(DATASET_PATH, file) for file in os.listdir("Final_Dataset")]
 # docs = get_all_doc(paths)
@@ -61,26 +60,26 @@ model = w2vv.train_word2vec(model_paths=r"models\\new_modelka111_6.model", optio
 
 if __name__ == "__main__":
     test(model)
-    # word_set = set()
-    # with open("scraped_data_utf8_1.json", "r") as r:
-    #     for w in r.readlines():
-    #         for res in json.JSONDecoder().decode(w).values():
-    #             if res is not None:
-    #                 word_set.update(res.split())
-    #
-    # patt = re.compile("[^а-я \-]")
-    # res = " ".join(word_set)
-    # res = patt.sub("", res).replace("  ", " ").replace("-", " ")
-    # res = pymystem3.Mystem().lemmatize(res)
-    #
-    # with open("stop_words.txt", "r") as r:
-    #     r = r.read().strip().split()
-    #     res = [i for i in res if i not in r]
-    #
-    # res = [word for word in res if word in model.wv.vocab]
-    # res = collections.Counter(res)
-    # word_set = res.most_common(15000)
-    # result = get_synonyms_list(word_set, model)
-    # result = {key[0]:[v[0] for v in val] for key, val in result.items()}
-    # with open("synonums_fast.json", "w") as w:
-    #      json.dump(result, w)
+    word_set = set()
+    with open("scraped_data_utf8_1.json", "r") as r:
+        for w in r.readlines():
+            for res in json.JSONDecoder().decode(w).values():
+                if res is not None:
+                    word_set.update(res.split())
+    
+    patt = re.compile("[^а-я \-]")
+    res = " ".join(word_set)
+    res = patt.sub("", res).replace("  ", " ").replace("-", " ")
+    res = pymystem3.Mystem().lemmatize(res)
+    
+    with open("stop_words.txt", "r") as r:
+        r = r.read().strip().split()
+        res = [i for i in res if i not in r]
+    
+    res = [word for word in res if word in model.wv.vocab]
+    res = collections.Counter(res)
+    word_set = res.most_common(15000)
+    result = get_synonyms_list(word_set, model)
+    result = {key[0]:[v[0] for v in val] for key, val in result.items()}
+    with open("synonums_fast.json", "w") as w:
+         json.dump(result, w)
